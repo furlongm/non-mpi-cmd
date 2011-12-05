@@ -35,7 +35,10 @@ mpiexec --mca mpi_warn_on_fork 0 \
 /home/furlongm/bin/non-mpi-cmd -c /home/furlongm/bin/europarl-parser.sh -d .
 
 Note that the full path to the binary or script is required, feel free to
-submit a patch that searches the current PATH environment.
+submit a patch that searches the current PATH environment. If you need to
+submit arguments to the command, enclose the entire command in quotes:
+
+./non-mpi-cmd -c "/bin/ls -l" -d /home/furlongm/non-mpi-cmd
 
 Adding "--mca mpi_warn_on_fork 0" to your mpiexec commands will avoid mpi
 errors about forking.

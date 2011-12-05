@@ -112,12 +112,23 @@ int main (int argc, char **argv) {
 	MPI_Comm_rank(MPI_COMM_WORLD, &rank);
 
 	if (rank == 0) {
+		char *exe;
+		char *sp;
+		char cmdcpy[MAX_BUF];
+		bzero(cmdcpy, MAX_BUF);
+		strcat(cmdcpy, cmd);
 
-		stat(cmd, &buf);
+		exe = strtok_r(cmdcpy, " ", &sp);
+
+		if (exe == NULL) {
+			fprintf (stderr, "[MASTER] Error: %s is not parsable.\n", cmd);
+			usage (argv[0]);
+		}
+		stat(exe, &buf);
 		if ( (S_ISREG (buf.st_mode)) && (buf.st_mode & S_IRUSR) && (buf.st_mode & S_IXUSR) ) {
-			fprintf (stdout, "[MASTER] Running command: %s\n", cmd);
+			fprintf (stdout, "[MASTER] Running command: %s %s\n", exe, sp);
 		} else {
-			fprintf (stderr, "[MASTER] Error: %s is not an executable file.\n", cmd);
+			fprintf (stderr, "[MASTER] Error: %s is not an executable file.\n", exe);
 			usage (argv[0]);
 		}
 		fflush(stdout);
@@ -283,7 +294,7 @@ void scan_dir (char *dir) {
 				struct file *f;
 				f = malloc(sizeof(*f));
 				f->name = malloc(sizeof(char[MAX_BUF]));
-				 bzero(f->name, MAX_BUF);
+				bzero(f->name, MAX_BUF);
 				strcat(f->name, namelist[i]->d_name);
 //				fprintf(stdout, "[SCAN_DIR] %s\n", f->name);
 				LIST_INSERT_HEAD(&files_head, f, neighbours);
